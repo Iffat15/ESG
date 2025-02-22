@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESG Carbon Dashboard</title>
+</head>
+<body>
+    <h1>ESG Carbon Footprint Tracker</h1>
+    <div id="data"></div>
+
+    <script>
+        setInterval(async () => {
+            const response = await fetch('/api/data');
+            const data = await response.json();
+
+            if (!data.error) {
+                document.getElementById('data').innerHTML = `
+                    <table>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>CPU Usage</th>
+                            <th>Memory Usage</th>
+                            <th>Total Power</th>
+                        </tr>
+                        ${data.map(row => `
+                            <tr>
+                                <td>${new Date(row.timestamp * 1000).toLocaleString()}</td>
+                                <td>${row.cpu_usage}%</td>
+                                <td>${row.memory_usage}%</td>
+                                <td>${row.total_power} W</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                `;
+            } else {
+                document.getElementById('data').innerText = "No data available.";
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
